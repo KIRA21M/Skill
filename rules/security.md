@@ -1,9 +1,9 @@
-# Security Rules
+# Reglas de seguridad
 
-1. `DELETE` without `WHERE` is `CRITICAL`.
-2. `UPDATE` without `WHERE` is `CRITICAL`.
-3. `WHERE` clauses that are tautologies, such as `1 = 1`, `TRUE`, or `col = col`, are `CRITICAL`.
-4. `DROP`, `TRUNCATE`, and destructive `ALTER TABLE` operations are `CRITICAL`.
-5. Dynamic SQL built with string concatenation or interpolation from untrusted values is `HIGH`.
-6. If the SQL text exposes an obvious injection boundary, name the boundary in the finding.
-7. If the query depends on permissions, row-level policies, or constraints that are not provided, report the uncertainty as `INFO`.
+1. `DELETE` sin `WHERE` es `CRITICAL`.
+2. `UPDATE` sin `WHERE` es `CRITICAL`.
+3. Las clausulas `WHERE` que sean tautologias, como `1 = 1`, `TRUE` o `col = col`, son `CRITICAL`.
+4. `DROP`, `TRUNCATE` y operaciones destructivas de `ALTER TABLE` son `CRITICAL`.
+5. El SQL dinamico construido con concatenacion de cadenas o interpolacion desde valores no confiables es `HIGH`.
+6. Si el texto SQL expone un limite obvio de inyeccion, nombra ese limite en el hallazgo.
+7. Si la consulta depende de permisos, politicas por fila o restricciones que no fueron proporcionadas, reporta la incertidumbre como `INFO`.

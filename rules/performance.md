@@ -1,8 +1,8 @@
-# Performance Rules
+# Reglas de rendimiento
 
-1. `SELECT *` is at least `MEDIUM` because it requests unnecessary columns.
-2. An unbounded `SELECT` without `LIMIT`, paging, or another clear restriction is `HIGH` when the query appears intended for repeated or application use.
-3. Functions wrapped around filtered columns can block index usage and should be flagged as `MEDIUM` unless the surrounding context shows a stronger risk.
-4. Joins without a visible join predicate are `HIGH`.
-5. A suspected missing index must be reported as `INFO` when schema metadata is absent.
-6. If a query returns many rows intentionally, the skill should avoid pretending that a performance issue is guaranteed.
+1. `SELECT *` es al menos `MEDIUM` porque solicita columnas innecesarias.
+2. Un `SELECT` sin limite, paginacion u otra restriccion clara es `HIGH` cuando la consulta parece destinada a uso repetido o de aplicacion.
+3. Las funciones aplicadas sobre columnas filtradas pueden bloquear el uso de indices y deben marcarse como `MEDIUM`, salvo que el contexto indique un riesgo mayor.
+4. Los `JOIN` sin un predicado visible de union son `HIGH`.
+5. Un indice posiblemente faltante debe reportarse como `INFO` cuando no haya metadatos del esquema.
+6. Si una consulta devuelve muchas filas de manera intencional, la skill debe evitar fingir que existe un problema de rendimiento garantizado.

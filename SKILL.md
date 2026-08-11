@@ -1,116 +1,116 @@
 # SQL Reviewer
 
 ## Purpose
-Review SQL statements and scripts as a deterministic technical reviewer.
-The skill must identify correctness, security, performance, and naming issues without executing SQL or inventing missing context.
+Revisar sentencias y scripts SQL como un revisor tecnico determinista.
+La skill debe identificar problemas de correccion, seguridad, rendimiento y nomenclatura sin ejecutar SQL ni inventar contexto faltante.
 
 ## When to activate
-Activate when the input contains SQL statements, SQL scripts, stored procedures, database migration snippets, query fragments, or embedded SQL that needs a technical review.
+Activala cuando la entrada contenga sentencias SQL, scripts SQL, procedimientos almacenados, fragmentos de migracion de base de datos, fragmentos de consulta o SQL incrustado que necesite revision tecnica.
 
 ## When NOT to activate
-Do not activate when:
-- The input is not SQL and has no embedded SQL.
-- The user asks to run, execute, or benchmark a query instead of reviewing it.
-- The request requires schema, row counts, indexes, or business rules that are not provided and cannot be inferred safely.
-- The user wants a generic SQL lesson instead of a review of specific SQL text.
+No la actives cuando:
+- La entrada no sea SQL y no tenga SQL incrustado.
+- El usuario pida ejecutar, correr o medir una consulta en vez de revisarla.
+- La solicitud requiera esquema, conteo de filas, indices o reglas de negocio que no fueron proporcionados y no puedan inferirse con seguridad.
+- El usuario quiera una leccion generica de SQL en lugar de una revision del texto SQL especifico.
 
 ## Inputs
-The skill accepts:
-- One or more SQL statements or scripts.
-- Optional dialect information such as PostgreSQL, MySQL, SQL Server, SQLite, or ANSI SQL.
-- Optional schema metadata, index metadata, and table cardinality hints.
-- Optional business rules, safety policies, or performance goals.
+La skill acepta:
+- Una o mas sentencias o scripts SQL.
+- Informacion opcional del dialecto, como PostgreSQL, MySQL, SQL Server, SQLite o ANSI SQL.
+- Metadatos opcionales del esquema, de indices y de cardinalidad de tablas.
+- Reglas de negocio, politicas de seguridad o metas de rendimiento opcionales.
 
-If dialect, schema, or workload details are absent, the skill must not invent them.
+Si faltan detalles del dialecto, del esquema o de la carga de trabajo, la skill no debe inventarlos.
 
 ## Procedure
-1. Split the input into statements and classify each statement by type.
-2. Normalize superficial formatting changes without changing meaning.
-3. Inspect security risks first, then correctness, then performance, then conventions.
-4. Apply the explicit rules in this file and in `rules/*.md`.
-5. If a rule depends on missing schema or workload information, report the uncertainty instead of guessing.
-6. Sort findings by severity from highest to lowest.
-7. If there are no findings, say that the SQL is acceptable under the provided context.
+1. Divide la entrada en sentencias y clasifica cada una por tipo.
+2. Normaliza cambios superficiales de formato sin alterar el significado.
+3. Revisa primero riesgos de seguridad, luego correccion, despues rendimiento y al final convenciones.
+4. Aplica las reglas explicitas de este archivo y de `rules/*.md`.
+5. Si una regla depende de informacion faltante del esquema o de la carga de trabajo, reporta la incertidumbre en lugar de adivinar.
+6. Ordena los hallazgos de mayor a menor severidad.
+7. Si no hay hallazgos, indica que el SQL es aceptable bajo el contexto proporcionado.
 
 ## Rules
-The skill must use explicit decision rules.
+La skill debe usar reglas de decision explicitas.
 
-IF statement = DELETE
-AND WHERE is absent
-THEN severity = CRITICAL
-AND do not recommend executing the statement.
+SI statement = DELETE
+Y WHERE esta ausente
+ENTONCES severity = CRITICAL
+Y no recomiendes ejecutar la sentencia.
 
-IF statement = UPDATE
-AND WHERE is absent
-THEN severity = CRITICAL
-AND do not recommend executing the statement.
+SI statement = UPDATE
+Y WHERE esta ausente
+ENTONCES severity = CRITICAL
+Y no recomiendes ejecutar la sentencia.
 
-IF WHERE clause is present
-AND the predicate is a tautology such as `1 = 1`, `TRUE`, `col = col`, or another always-true filter
-THEN severity = CRITICAL
-AND treat the statement as effectively unbounded.
+SI hay una clausula WHERE
+Y el predicado es una tautologia como `1 = 1`, `TRUE`, `col = col` u otro filtro siempre verdadero
+ENTONCES severity = CRITICAL
+Y trata la sentencia como efectivamente ilimitada.
 
-IF statement contains destructive operations such as `DROP`, `TRUNCATE`, `ALTER TABLE ... DROP`, or equivalent data-loss actions
-THEN severity = CRITICAL.
+SI la sentencia contiene operaciones destructivas como `DROP`, `TRUNCATE`, `ALTER TABLE ... DROP` o acciones equivalentes de perdida de datos
+ENTONCES severity = CRITICAL.
 
-IF SQL text shows concatenation or string interpolation that can inject untrusted values into SQL
-THEN severity = HIGH
-AND mention the injection boundary explicitly.
+SI el texto SQL muestra concatenacion o interpolacion de cadenas que pueda inyectar valores no confiables en SQL
+ENTONCES severity = HIGH
+Y menciona el limite de inyeccion de forma explicita.
 
-IF NULL is compared with `=`, `!=`, or `<>` instead of `IS NULL` or `IS NOT NULL`
-THEN severity = HIGH
-AND explain the null-comparison bug.
+SI `NULL` se compara con `=`, `!=` o `<>` en lugar de `IS NULL` o `IS NOT NULL`
+ENTONCES severity = HIGH
+Y explica el error de comparacion con null.
 
-IF a DDL statement stores an obviously numeric, monetary, or date value in a text type without justification in the input
-THEN severity = MEDIUM
-AND explain the type mismatch.
+SI una sentencia DDL guarda un valor claramente numerico, monetario o de fecha en un tipo de texto sin justificacion en la entrada
+ENTONCES severity = MEDIUM
+Y explica la incompatibilidad de tipos.
 
-IF a predicate matches all rows through wildcard logic such as `LIKE '%'` or `ILIKE '%'`
-THEN treat the statement as effectively unbounded
-AND apply `CRITICAL` to destructive DML or `HIGH` to read-only queries.
+SI un predicado coincide con todas las filas mediante logica comodin como `LIKE '%'` o `ILIKE '%'`
+ENTONCES trata la sentencia como efectivamente ilimitada
+Y aplica `CRITICAL` a DML destructivo o `HIGH` a consultas de solo lectura.
 
-IF LIMIT is extremely large, such as `1000000` or more
-THEN severity = HIGH
-AND explain that the cap is not meaningfully restrictive.
+SI `LIMIT` es extremadamente grande, por ejemplo `1000000` o mas
+ENTONCES severity = HIGH
+Y explica que el tope no es realmente restrictivo.
 
-IF the issue depends on schema facts that are not provided
-THEN severity = INFO
-AND state that the conclusion cannot be confirmed.
+SI el problema depende de hechos del esquema que no fueron proporcionados
+ENTONCES severity = INFO
+Y indica que la conclusion no se puede confirmar.
 
-IF multiple rules match
-THEN use the highest severity that applies.
+SI varias reglas coinciden
+ENTONCES usa la severidad mas alta que aplique.
 
 ## Severity levels
-- CRITICAL: Immediate risk of destructive or unsafe behavior.
-- HIGH: Strong security, correctness, or performance risk that should be fixed before use.
-- MEDIUM: Important maintainability or efficiency issue with moderate impact.
-- LOW: Style, naming, or clarity issue with limited direct risk.
-- INFO: Uncertain issue, missing context, or advisory note that cannot be confirmed.
+- CRITICAL: Riesgo inmediato de comportamiento destructivo o inseguro.
+- HIGH: Riesgo fuerte de seguridad, correccion o rendimiento que debe corregirse antes de usarlo.
+- MEDIUM: Problema importante de mantenibilidad o eficiencia con impacto moderado.
+- LOW: Problema de estilo, nombres o claridad con riesgo directo limitado.
+- INFO: Problema incierto, contexto faltante o nota de caracter informativo que no puede confirmarse.
 
 ## Expected output
-The skill should produce:
-- A short overall assessment.
-- A list of findings, each with:
-  - Severity
-  - Statement or fragment
-  - Evidence
-  - Why it matters
-  - Recommended fix
+La skill debe producir:
+- Una evaluacion general breve.
+- Una lista de hallazgos, cada uno con:
+  - Severidad
+  - Sentencia o fragmento
+  - Evidencia
+  - Por que importa
+  - Correccion recomendada
 
-If context is insufficient, the output must say what is missing and what cannot be concluded.
-The skill must never claim certainty about indexes, row counts, or constraints when those facts were not provided.
+Si el contexto es insuficiente, la salida debe decir que falta y que no se puede concluir.
+La skill nunca debe afirmar con certeza que existen indices, conteos de filas o restricciones cuando esos datos no fueron proporcionados.
 
 ## Validation
-Before finalizing a review, verify that:
-- Every finding points to concrete SQL text.
-- No finding depends on invented schema or workload data.
-- Severity matches the explicit rules.
-- Recommendations do not tell the user to run unsafe SQL.
-- The review remains reproducible when the same input is provided again.
+Antes de finalizar una revision, verifica que:
+- Cada hallazgo apunte a texto SQL concreto.
+- Ningun hallazgo dependa de esquema o carga de trabajo inventados.
+- La severidad coincida con las reglas explicitas.
+- Las recomendaciones no le digan al usuario que ejecute SQL inseguro.
+- La revision siga siendo reproducible cuando se entregue la misma entrada otra vez.
 
 ## Failure handling
-If the input is ambiguous, parse each possible statement boundary and say where the ambiguity is.
-If the dialect is unknown, use conservative ANSI SQL assumptions and note dialect-specific uncertainty.
-If schema data is missing, downgrade schema-dependent conclusions to INFO.
-If the input is malformed, report the parse problem and review only the parts that are still readable.
-If the content is not SQL, explain that the skill is inactive for that input.
+Si la entrada es ambigua, analiza cada posible limite de sentencia y explica donde esta la ambiguedad.
+Si el dialecto es desconocido, usa supuestos conservadores de ANSI SQL y anota la incertidumbre especifica del dialecto.
+Si faltan datos del esquema, degrada a `INFO` las conclusiones que dependan de ese esquema.
+Si la entrada esta mal formada, reporta el problema de parseo y revisa solo las partes que sigan siendo legibles.
+Si el contenido no es SQL, explica que la skill no se activa para esa entrada.

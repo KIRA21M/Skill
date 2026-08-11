@@ -1,24 +1,24 @@
-# SQL Reviewer Skill
+# Skill SQL Reviewer
 
-This repository contains a reusable `sql-reviewer` skill for reviewing SQL statements and scripts.
+Este repositorio contiene una skill reutilizable `sql-reviewer` para revisar sentencias y scripts SQL.
 
-## Contents
-- `SKILL.md` defines activation, procedure, rules, severity levels, and failure handling.
-- `rules/security.md` captures security-oriented checks.
-- `rules/performance.md` captures performance-oriented checks.
-- `rules/conventions.md` captures naming and readability checks.
-- `examples/` contains sample SQL inputs.
-- `tests/` contains five scenario-based validation cases.
+## Contenido
+- `SKILL.md` define activacion, procedimiento, reglas, niveles de severidad y manejo de fallas.
+- `rules/security.md` contiene validaciones orientadas a seguridad.
+- `rules/performance.md` contiene validaciones orientadas a rendimiento.
+- `rules/conventions.md` contiene validaciones de nomenclatura y legibilidad.
+- `examples/` contiene ejemplos de entrada SQL.
+- `tests/` contiene cinco casos de validacion basados en escenarios.
 
-## Scope
-The repository stays focused on the assignment requirements:
-- Review SQL.
-- Classify findings with the required severity levels.
-- Avoid inventing schema or workload context.
-- Provide deterministic behavior and explicit fallback handling.
+## Alcance
+El repositorio se mantiene enfocado en los requisitos de la actividad:
+- Revisar SQL.
+- Clasificar hallazgos con los niveles de severidad requeridos.
+- Evitar inventar contexto de esquema o de carga de trabajo.
+- Proporcionar comportamiento determinista y manejo explicito de casos alternos.
 
-## Notes
-The skill is designed to be reproducible and easy to defend orally:
-- Rules are written as decision statements.
-- Missing data is handled explicitly.
-- Findings are tied to concrete SQL evidence.
+## Notas
+La skill esta pensada para ser reproducible y facil de defender oralmente:
+- Las reglas estan escritas como decisiones concretas.
+- Los datos faltantes se manejan de forma explicita.
+- Los hallazgos se vinculan con evidencia SQL concreta.
