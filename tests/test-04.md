@@ -11,16 +11,16 @@ GROUP BY customer_id;
 ```
 
 ## Expected behavior
-The skill should avoid claiming that an index is missing because no schema metadata was provided.
+La skill debe evitar afirmar que falta un indice porque no se proporcionaron metadatos del esquema.
 
 ## Actual behavior
-The review keeps the note at `INFO` level and states that index presence cannot be confirmed from the input alone.
+La revision mantiene la observacion en nivel `INFO` y dice que la presencia del indice no se puede confirmar solo con la entrada.
 
 ## Pass / Fail
-Pass
+Aprobado
 
 ## Problem detected
-Schema-dependent conclusions must not be invented.
+No se deben inventar conclusiones que dependan del esquema.
 
 ## Modification made to the skill
-Added an explicit `INFO` fallback when schema or index metadata is missing.
+Se agrego una salida explicita en `INFO` cuando faltan metadatos del esquema o de indices.

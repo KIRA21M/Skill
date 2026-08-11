@@ -13,16 +13,16 @@ LIMIT 20;
 ```
 
 ## Expected behavior
-The skill should report no security, correctness, or performance findings for the provided context.
+La skill no debe reportar hallazgos de seguridad, correccion ni rendimiento para el contexto proporcionado.
 
 ## Actual behavior
-The review returns no findings and does not invent missing schema details.
+La revision no devuelve hallazgos y no inventa detalles faltantes del esquema.
 
 ## Pass / Fail
-Pass
+Aprobado
 
 ## Problem detected
-None.
+Ninguno.
 
 ## Modification made to the skill
-None.
+Ninguna.

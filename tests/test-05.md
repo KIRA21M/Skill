@@ -13,16 +13,16 @@ LIMIT 1000000000;
 ```
 
 ## Expected behavior
-The skill should flag dynamic SQL concatenation as `HIGH`, identify the injection boundary, and flag the huge `LIMIT` as suspiciously weak for a read query.
+La skill debe marcar la concatenacion de SQL dinamico como `HIGH`, identificar el limite de inyeccion y marcar el `LIMIT` enorme como sospechosamente debil para una consulta de lectura.
 
 ## Actual behavior
-The review marks the concatenation as `HIGH`, points out the untrusted boundary, and flags the huge `LIMIT` as `HIGH`.
+La revision marca la concatenacion como `HIGH`, senala el limite no confiable y marca el `LIMIT` enorme como `HIGH`.
 
 ## Pass / Fail
-Pass
+Aprobado
 
 ## Problem detected
-Dynamic SQL can hide the destructive target table and the injected identifier value, and a huge `LIMIT` can still be effectively unbounded.
+El SQL dinamico puede ocultar la tabla destino destructiva y el valor del identificador inyectado, y un `LIMIT` enorme todavia puede ser efectivamente ilimitado.
 
 ## Modification made to the skill
-Added explicit rules for string concatenation, wildcard-all predicates, null comparisons, data-type mismatches, and extremely large `LIMIT` values.
+Se agregaron reglas explicitas para concatenacion de cadenas, predicados comodin que abarcan todo, comparaciones con `NULL`, incompatibilidades de tipos y valores de `LIMIT` extremadamente grandes.

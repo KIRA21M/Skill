@@ -6,16 +6,16 @@ DELETE FROM users WHERE 1 = 1;
 ```
 
 ## Expected behavior
-The skill should treat the tautological predicate as effectively unbounded and classify the statement as `CRITICAL`.
+La skill debe tratar el predicado tautologico como efectivamente ilimitado y clasificar la sentencia como `CRITICAL`.
 
 ## Actual behavior
-The review flags the statement as `CRITICAL` and explains that `WHERE 1 = 1` does not make the deletion safe.
+La revision marca la sentencia como `CRITICAL` y explica que `WHERE 1 = 1` no vuelve segura la eliminacion.
 
 ## Pass / Fail
-Pass
+Aprobado
 
 ## Problem detected
-A superficial `WHERE` clause can hide a destructive statement.
+Una clausula `WHERE` superficial puede ocultar una sentencia destructiva.
 
 ## Modification made to the skill
-Clarified that tautological predicates such as `1 = 1`, `TRUE`, and `col = col` are `CRITICAL`.
+Se aclaro que los predicados tautologicos como `1 = 1`, `TRUE` y `col = col` son `CRITICAL`.
