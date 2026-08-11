@@ -66,6 +66,13 @@ WHERE id NOT IN (SELECT user_id FROM blocked_users);
 
 La skill evaluada detecta correctamente varios riesgos basicos: operaciones de escritura sin `WHERE`, tautologias, SQL dinamico concatenado, coincidencias totales, limites excesivos y problemas de rendimiento comunes. Los huecos encontrados no consisten en ignorar todos esos patrones, sino en la falta de criterios completamente deterministas para algunos casos y en una cobertura parcial de la semantica de `NULL`.
 
+## Trazabilidad de la evidencia
+
+- RT-01 se contrasto con `SKILL.md` y `rules/security.md`, en las secciones de procedimiento, validacion y SQL dinamico.
+- RT-02 se contrasto con `SKILL.md` y `rules/security.md`, en las reglas sobre filtros amplios y en la prohibicion de inventar cardinalidad.
+- RT-03 se contrasto con `rules/conventions.md`, en las reglas de `NULL`, y con la ausencia de un caso equivalente en las pruebas del repositorio.
+- Los tres casos se revisaron sin asumir un motor especifico ni datos que no estuvieran incluidos en las entradas.
+
 ## Conclusion
 
 El resultado es: **requiere ajustes menores antes de considerarse completamente reproducible**.
