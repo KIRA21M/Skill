@@ -57,6 +57,22 @@ IF SQL text shows concatenation or string interpolation that can inject untruste
 THEN severity = HIGH
 AND mention the injection boundary explicitly.
 
+IF NULL is compared with `=`, `!=`, or `<>` instead of `IS NULL` or `IS NOT NULL`
+THEN severity = HIGH
+AND explain the null-comparison bug.
+
+IF a DDL statement stores an obviously numeric, monetary, or date value in a text type without justification in the input
+THEN severity = MEDIUM
+AND explain the type mismatch.
+
+IF a predicate matches all rows through wildcard logic such as `LIKE '%'` or `ILIKE '%'`
+THEN treat the statement as effectively unbounded
+AND apply `CRITICAL` to destructive DML or `HIGH` to read-only queries.
+
+IF LIMIT is extremely large, such as `1000000` or more
+THEN severity = HIGH
+AND explain that the cap is not meaningfully restrictive.
+
 IF the issue depends on schema facts that are not provided
 THEN severity = INFO
 AND state that the conclusion cannot be confirmed.
